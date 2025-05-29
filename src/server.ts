@@ -5,6 +5,9 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/user';
 import propertyRoutes from './routes/property';
 import favoritesRoutes from './routes/favorites';
+import recommendationsRouter from './routes/recommendations';
+
+
 
 dotenv.config();
 
@@ -18,6 +21,8 @@ mongoose.connect(process.env.MONGO_URI || '', { })
 app.use('/user', authRoutes);
 app.use('/property', propertyRoutes);
 app.use('/favorites', favoritesRoutes);
+app.use('/recommendations', recommendationsRouter);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
