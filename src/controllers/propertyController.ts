@@ -18,7 +18,7 @@ export const createProperty = async (req: Request, res: Response) => {
   }
 };
 
-// Get all properties (public
+// Get all properties (public)
 export const getProperties = async (_req: Request, res: Response) => {
   try {
     const properties = await Property.find();
@@ -86,91 +86,78 @@ export const deleteProperty = async (req: Request, res: Response) => {
   }
 };
  
-// Search properties with filters (public)
+export const advancedSearch = async (req: Request, res: Response) => {
+  try {
+    const {
+      id,
+      title,
+      type,
+      minPrice,
+      maxPrice,
+      state,
+      city,
+      minAreaSqFt,
+      maxAreaSqFt,
+      bedrooms,
+      bathrooms,
+      amenities,
+      furnished,
+      availableFrom,
+      listedBy,
+      tags,
+      isVerified
+    } = req.query;
 
-// export const searchProperties = async (req: Request, res: Response) => {
-//   try {
-//     const filter: any = {};
+    const filter: any = {};
 
-//     // String fields with exact or partial (regex) match
-//     if (req.query.title) {
-//       filter.title = { $regex: req.query.title as string, $options: "i" };
-//     }
-//     if (req.query.type) filter.type = req.query.type;
-//     if (req.query.state) filter.state = req.query.state;
-//     if (req.query.city) filter.city = req.query.city;
-//     if (req.query.furnished) filter.furnished = req.query.furnished;
-//     if (req.query.listedBy) filter.listedBy = req.query.listedBy;
-//     if (req.query.colorTheme) filter.colorTheme = req.query.colorTheme;
-//     if (req.query.listingType) filter.listingType = req.query.listingType;
-//     if (req.query.createdBy) filter.createdBy = req.query.createdBy;
-//     if (req.query.isVerified !== undefined) filter.isVerified = req.query.isVerified === "true";
+    if (id) filter._id = id;
+    if (title) filter.title = { $regex: title, $options: 'i' };
+    if (type) filter.type = type;
+    if (state) filter.state = state;
+    if (city) filter.city = { $regex: city, $options: 'i' };
+    if (bedrooms && !isNaN(Number(bedrooms))) filter.bedrooms = Number(bedrooms);
+    if (bathrooms && !isNaN(Number(bathrooms))) filter.bathrooms = Number(bathrooms);
+    if (furnished) filter.furnished = furnished;
+    if (listedBy) filter.listedBy = listedBy;
+    if (isVerified !== undefined) filter.isVerified = isVerified === 'true';
 
-//     // Numeric range filters
-//     if (req.query.priceMin || req.query.priceMax) {
-//       filter.price = {};
-//       if (req.query.priceMin) filter.price.$gte = Number(req.query.priceMin);
-//       if (req.query.priceMax) filter.price.$lte = Number(req.query.priceMax);
-//     }
-//     if (req.query.areaSqFtMin || req.query.areaSqFtMax) {
-//       filter.areaSqFt = {};
-//       if (req.query.areaSqFtMin) filter.areaSqFt.$gte = Number(req.query.areaSqFtMin);
-//       if (req.query.areaSqFtMax) filter.areaSqFt.$lte = Number(req.query.areaSqFtMax);
-//     }
-//     if (req.query.bedrooms) filter.bedrooms = Number(req.query.bedrooms);
-//     if (req.query.bathrooms) filter.bathrooms = Number(req.query.bathrooms);
+    if (minPrice || maxPrice) {
+      filter.price = {};
+      if (minPrice && !isNaN(Number(minPrice))) filter.price.$gte = Number(minPrice);
+      if (maxPrice && !isNaN(Number(maxPrice))) filter.price.$lte = Number(maxPrice);
+    }
 
-//     // Date filter
-//     if (req.query.availableFrom) {
-//       filter.availableFrom = { $gte: new Date(req.query.availableFrom as string) };
-//     }
+    if (minAreaSqFt || maxAreaSqFt) {
+      filter.areaSqFt = {};
+      if (minAreaSqFt && !isNaN(Number(minAreaSqFt))) filter.areaSqFt.$gte = Number(minAreaSqFt);
+      if (maxAreaSqFt && !isNaN(Number(maxAreaSqFt))) filter.areaSqFt.$lte = Number(maxAreaSqFt);
+    }
 
-//     // Tags and amenities (expects comma separated values, matches all)
-//     if (req.query.amenities) {
-//       filter.amenities = { $all: (req.query.amenities as string).split(",") };
-//     }
-//     if (req.query.tags) {
-//       filter.tags = { $all: (req.query.tags as string).split(",") };
-//     }
+    if (availableFrom) {
+      const date = new Date(availableFrom as string);
+      if (!isNaN(date.getTime())) {
+        filter.availableFrom = { $gte: date };
+      }
+    }
 
-//     // Rating filter
-//     if (req.query.ratingMin || req.query.ratingMax) {
-//       filter.rating = {};
-//       if (req.query.ratingMin) filter.rating.$gte = Number(req.query.ratingMin);
-//       if (req.query.ratingMax) filter.rating.$lte = Number(req.query.ratingMax);
-//     }
+    if (amenities) {
+      const amenitiesArr = Array.isArray(amenities)
+        ? amenities
+        : (amenities as string).split(',').map(a => a.trim());
+      filter.amenities = { $all: amenitiesArr };
+    }
+    if (tags) {
+      const tagsArr = Array.isArray(tags)
+        ? tags
+        : (tags as string).split(',').map(t => t.trim());
+      filter.tags = { $all: tagsArr };
+    }
 
-//     // Pagination
-//     const page = Number(req.query.page) > 0 ? Number(req.query.page) : 1;
-//     const limit = Number(req.query.limit) > 0 ? Number(req.query.limit) : 20;
-//     const skip = (page - 1) * limit;
-
-//     // Sorting
-//     const sortField = req.query.sortField as string || "createdAt";
-//     const sortOrder = req.query.sortOrder === "asc" ? 1 : -1;
-
-//     // --- Redis Caching ---
-//     const cacheKey = `properties:${JSON.stringify(req.query)}`;
-//     const cached = await redisClient.get(cacheKey);
-//     if (cached) {
-//       return res.json(JSON.parse(cached));
-//     }
-
-//     // Query execution
-//     const properties = await Property.find(filter)
-//       .sort({ [sortField]: sortOrder })
-//       .skip(skip)
-//       .limit(limit);
-
-//     const total = await Property.countDocuments(filter);
-
-//     const response = { total, page, limit, properties };
-
-//     // Cache the result for 5 minutes (300 seconds)
-//     await redisClient.setEx(cacheKey, 300, JSON.stringify(response));
-
-//     res.json(response);
-//   } catch (err) {
-//     res.status(500).json({ message: "Server Error", error: err });
-//   }
-// };
+    const properties = await Property.find(filter);
+    console.log('Filter:', filter);
+    res.status(200).json({ properties });
+  } catch (err) {
+    console.error('Error in advancedSearch:', err);
+    res.status(500).json({ message: ' Server error', error: (err as Error).message });
+  }
+};

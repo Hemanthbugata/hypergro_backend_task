@@ -5,7 +5,7 @@ import {
   getPropertyById,
   updateProperty,
   deleteProperty,
-  // searchProperties,
+  advancedSearch,
 } from "../controllers/propertyController";
 import { auth } from "../middlewares/auth"; 
 
@@ -16,6 +16,6 @@ router.get("/", getProperties);
 router.get("/:id", getPropertyById);
 router.put("/:id", auth, updateProperty);
 router.delete("/:id", auth, deleteProperty);
-// router.get("/search", searchProperties);
+router.post("/search", advancedSearch);
 
 export default router;
