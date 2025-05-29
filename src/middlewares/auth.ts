@@ -19,12 +19,16 @@ export const auth = (req: AuthRequest, res: Response, next: NextFunction) => {
   }
 
   const token = authHeader.split(' ')[1];
+  console.log('Received token:', token); 
+
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { _id: string };
     req.userId = decoded._id;
+    console.log('auth middleware passed, user ID:', req.userId);
     next();
   } catch (err) {
+    console.error('Token verification error:', err);
     res.status(401).json({ error: 'Invalid or expired token' });
   }
 };

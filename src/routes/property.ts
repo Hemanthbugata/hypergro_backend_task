@@ -5,8 +5,9 @@ import {
   getPropertyById,
   updateProperty,
   deleteProperty,
+  // searchProperties,
 } from "../controllers/propertyController";
-import { auth } from "../middlewares/auth"; // You need to implement this if not already
+import { auth } from "../middlewares/auth"; 
 
 const router = express.Router();
 
@@ -15,5 +16,6 @@ router.get("/", getProperties);
 router.get("/:id", getPropertyById);
 router.put("/:id", auth, updateProperty);
 router.delete("/:id", auth, deleteProperty);
+// router.get("/search", searchProperties);
 
 export default router;
