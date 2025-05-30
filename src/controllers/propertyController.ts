@@ -86,7 +86,7 @@ export const deleteProperty = async (req: Request, res: Response) => {
   }
 };
  
-export const advancedSearch = async (req: Request, res: Response) => {
+export const getAdvancedSearch = async (req: Request, res: Response) => {
   try {
     const {
       id,
