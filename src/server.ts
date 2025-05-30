@@ -24,7 +24,7 @@ app.use('/favorites', favoritesRoutes);
 app.use('/recommendations', recommendationsRouter);
 
 app.get('/', (req, res) => {
-  res.send('API is running');
+  res.send('API is running successfully and only Public Accessed routes are available');
 });
 
 
