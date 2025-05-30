@@ -161,6 +161,8 @@ brew services start redis
 Use these with:  
 `GET http://localhost:5000/property/search?...`
 
+### Basic Examples
+
 1. **Search by City**
    ```
    /property/search?city=Coimbatore
@@ -210,6 +212,35 @@ Use these with:
     ```
     /property/search?listingType=rent
     ```
+
+---
+
+### Combined Advanced Examples
+
+1. **City, Price Range, Bedrooms, Amenities**
+   ```
+   /property/search?city=Mysore&minPrice=20000000&maxPrice=50000000&bedrooms=5&amenities=lift,security
+   ```
+
+2. **State, Type, Furnished, Tags, Verified**
+   ```
+   /property/search?state=West%20Bengal&type=Apartment&furnished=Semi&tags=corner-plot,near-metro&isVerified=false
+   ```
+
+3. **City, Available From, Listing Type, Bathrooms, Amenities**
+   ```
+   /property/search?city=New%20Delhi&availableFrom=2025-07-06&listingType=rent&bathrooms=5&amenities=wifi,gym
+   ```
+
+4. **Price Range, Area, Bedrooms, Tags, Verified**
+   ```
+   /property/search?minPrice=4000000&maxPrice=20000000&minAreaSqFt=600&maxAreaSqFt=3500&bedrooms=3&tags=family-friendly,gated-community&isVerified=true
+   ```
+
+5. **State, City, Type, Furnished, Amenities, Listing Type**
+   ```
+   /property/search?state=Karnataka&city=Bangalore&type=Villa&furnished=Furnished&amenities=clubhouse,parking,wifi&listingType=rent
+   ```
 
 ---
 
