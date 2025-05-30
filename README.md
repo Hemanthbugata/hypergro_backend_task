@@ -2,6 +2,8 @@
 
 A Node.js backend project for managing and querying real estate property data, using Express, MongoDB, Redis, and CSV data import.
 
+---
+
 ## Features
 
 - RESTful API for property listings
@@ -10,6 +12,8 @@ A Node.js backend project for managing and querying real estate property data, u
 - Caching with Redis
 - Data storage with MongoDB
 - TypeScript support
+
+---
 
 ## Tech Stack
 
@@ -20,6 +24,8 @@ A Node.js backend project for managing and querying real estate property data, u
 - **csvtojson**: CSV parsing
 - **bcryptjs**: Password hashing
 - **jsonwebtoken**: Authentication
+
+---
 
 ## Getting Started
 
@@ -50,7 +56,7 @@ A Node.js backend project for managing and querying real estate property data, u
    MONGODB_URI=mongodb://localhost:27017/hypergro
    REDIS_URL=redis://localhost:6379
    JWT_SECRET=your_jwt_secret
-   PORT=3000
+   PORT=5000
    ```
 
 4. **Build the project:**
@@ -66,6 +72,28 @@ A Node.js backend project for managing and querying real estate property data, u
    ```sh
    npm run dev
    ```
+
+### Redis Installation
+
+#### On Ubuntu/Debian:
+```sh
+sudo apt update
+sudo apt install redis-server
+sudo systemctl enable redis-server
+sudo systemctl start redis-server
+```
+
+#### On Mac (Homebrew):
+```sh
+brew install redis
+brew services start redis
+```
+
+#### On Windows:
+- Download from [https://github.com/microsoftarchive/redis/releases](https://github.com/microsoftarchive/redis/releases)
+- Extract and run `redis-server.exe`
+
+---
 
 ## Project Structure
 
@@ -83,26 +111,107 @@ A Node.js backend project for managing and querying real estate property data, u
 └── README.md
 ```
 
-## Scripts
-
-- `npm run dev` – Start server with hot-reload (development)
-- `npm run build` – Compile TypeScript to JavaScript
-- `npm start` – Start server from compiled code
-
-## Data
-
-- **properties.csv**: Contains property listings with fields like ID, description, type, location, features, price, etc.
-- Data is loaded and converted to JSON using `csvtojson`.
+---
 
 ## API Endpoints
 
-> _Update this section with your actual endpoints and their usage._
+### User Authentication
 
-- `GET /properties` – List all properties
-- `GET /properties/:id` – Get property by ID
-- `POST /auth/register` – Register a new user
-- `POST /auth/login` – Login and receive JWT
-- `GET /search` – Search/filter properties
+| Method | Endpoint         | Description            |
+|--------|------------------|------------------------|
+| POST   | `/user/signup`   | Register a new user    |
+| POST   | `/user/login`    | Login and receive JWT  |
+
+---
+
+### Property
+
+| Method | Endpoint                    | Description                    |
+|--------|-----------------------------|--------------------------------|
+| POST   | `/property/create`          | Create a new property (auth)   |
+| GET    | `/property/`                | List all properties            |
+| GET    | `/property/search`          | Advanced property search       |
+| GET    | `/property/:id`             | Get property by MongoDB ID     |
+| PUT    | `/property/:id`             | Update property (auth, owner)  |
+| DELETE | `/property/:id`             | Delete property (auth, owner)  |
+
+---
+
+### Favorites
+
+| Method | Endpoint                      | Description                          |
+|--------|-------------------------------|--------------------------------------|
+| POST   | `/favorites/:propertyId`      | Add property to favorites (auth)     |
+| GET    | `/favorites/`                 | Get user's favorite properties (auth)|
+| DELETE | `/favorites/:propertyId`      | Remove property from favorites (auth)|
+
+---
+
+### Recommendations
+
+| Method | Endpoint                  | Description                                 |
+|--------|---------------------------|---------------------------------------------|
+| POST   | `/recommendations/recommend` | Recommend a property to another user (auth)|
+| GET    | `/recommendations/received`  | Get properties recommended to user (auth)  |
+
+---
+
+## Example Advanced Search Queries
+
+Use these with:  
+`GET http://localhost:5000/property/search?...`
+
+1. **Search by City**
+   ```
+   /property/search?city=Coimbatore
+   ```
+
+2. **Search by State and Type**
+   ```
+   /property/search?state=Karnataka&type=Villa
+   ```
+
+3. **Search by Price Range**
+   ```
+   /property/search?minPrice=20000000&maxPrice=30000000
+   ```
+
+4. **Search by Bedrooms and Bathrooms**
+   ```
+   /property/search?bedrooms=5&bathrooms=2
+   ```
+
+5. **Search by Amenities (multiple)**
+   ```
+   /property/search?amenities=lift,clubhouse,security
+   ```
+
+6. **Search by Furnished Status**
+   ```
+   /property/search?furnished=Furnished
+   ```
+
+7. **Search by Available From Date**
+   ```
+   /property/search?availableFrom=2025-10-14
+   ```
+
+8. **Search by Tags (multiple)**
+   ```
+   /property/search?tags=gated-community,corner-plot
+   ```
+
+9. **Search by Verified Properties**
+   ```
+   /property/search?isVerified=true
+   ```
+
+10. **Search by Listing Type (rent/sale)**
+    ```
+    /property/search?listingType=rent
+    ```
+
+---
 
 ## Environment Variables
 
@@ -113,9 +222,8 @@ A Node.js backend project for managing and querying real estate property data, u
 | JWT_SECRET    | Secret for JWT tokens       |
 | PORT          | Port to run the server      |
 
+---
+
 ## License
 
 [ISC](LICENSE)
-
----
-
