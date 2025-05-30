@@ -11,4 +11,14 @@ redisClient.on("error", (err) => console.error("Redis Client Error", err));
   console.log("✅ Redis connected");
 })();
 
+export async function getCache(key: string) {
+  const data = await redisClient.get(key);
+  return data ? JSON.parse(data) : null;
+}
+
+export async function setCache(key: string, value: any, ttlSeconds = 300) {
+  await redisClient.set(key, JSON.stringify(value), { EX: ttlSeconds });
+}
+
+
 export default redisClient;

@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import User from '../models/user';
 import Property from '../models/property';
+import { getCache, setCache } from '../utils/redis';
+
 
 export const addFavorite = async (req: Request, res: Response) => {
   try {
@@ -33,17 +35,16 @@ export const addFavorite = async (req: Request, res: Response) => {
 };
 
 export const getFavorites = async (req: Request, res: Response) => {
+  const cacheKey = `favorites:${req.userId}`;
+  const cached = await getCache(cacheKey);
+  if (cached) return res.status(200).json({ favorites: cached });
+
   try {
     const userId = req.userId;
     const user = await User.findById(userId);
-    if (!user) {
-      res.status(404).json({ message: 'User not found' });
-      return;
-    }
-
-    // Find all properties with id in user's favorites array
+    if (!user) return res.status(404).json({ message: 'User not found' });
     const properties = await Property.find({ id: { $in: user.favorites } });
-
+    await setCache(cacheKey, properties);
     res.status(200).json({ favorites: properties });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err });

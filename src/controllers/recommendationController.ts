@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import User from '../models/user';
 import Property from '../models/property';
 
+
 export const recommendProperty = async (req: Request, res: Response) => {
   try {
     const { recipientEmail, propertyId } = req.body;
