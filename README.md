@@ -166,6 +166,7 @@ Use these with:
 1. **Search by City**
    ```
    /property/search?city=Coimbatore
+   https://hypergro-backend-task.vercel.app/property/search?city=Coimbatore
    ```
 
 2. **Search by State and Type**
@@ -255,6 +256,16 @@ Use these with:
 
 ---
 
-## License
+## Direct Accessiable links after deployment 
 
-[ISC](LICENSE)
+https://hypergro-backend-task.vercel.app/property
+
+https://hypergro-backend-task.vercel.app/property/search?city=Coimbatore
+
+https://hypergro-backend-task.vercel.app/property/search?city=Chennai&priceMin=100000
+
+
+
+
+
+
