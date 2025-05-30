@@ -21,11 +21,13 @@ export const createProperty = async (req: Request, res: Response) => {
 };
 
 // Get all properties (public)
-export const getProperties = async (req: Request, res: Response) => {
+export const getProperties = async (req: Request, res: Response): Promise<void> => {
   const cacheKey = 'properties:all';
   const cached = await getCache(cacheKey);
-  if (cached) return res.json(cached);
-
+  if (cached) {
+    res.json(cached);
+    return;
+  }
   try {
     const properties = await Property.find();
     await setCache(cacheKey, properties);
@@ -35,14 +37,20 @@ export const getProperties = async (req: Request, res: Response) => {
   }
 };
 // Get property by ID (public)
-export const getPropertyById = async (req: Request, res: Response) => {
+export const getPropertyById = async (req: Request, res: Response): Promise<void> => {
   const cacheKey = `property:${req.params.id}`;
   const cached = await getCache(cacheKey);
-  if (cached) return res.json(cached);
+  if (cached) {
+    res.json(cached);
+    return;
+  }
 
   try {
     const property = await Property.findById(req.params.id);
-    if (!property) return res.status(404).json({ message: "Not found" });
+    if (!property) {
+      res.status(404).json({ message: "Not found" });
+      return;
+    }
     await setCache(cacheKey, property);
     res.json(property);
   } catch (err) {
@@ -137,11 +145,14 @@ function buildPropertyFilter(query: any) {
   return filter;
 }
 
-export const getAdvancedSearch = async (req: Request, res: Response) => {
+export const getAdvancedSearch = async (req: Request, res: Response): Promise<void> => {
   const filter = buildPropertyFilter(req.query);
   const cacheKey = `property:search:${JSON.stringify(filter)}`;
   const cached = await getCache(cacheKey);
-  if (cached) return res.json({ properties: cached });
+  if (cached) {
+    res.json({ properties: cached });
+    return;
+  }
 
   try {
     const properties = await Property.find(filter);

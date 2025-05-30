@@ -34,15 +34,21 @@ export const addFavorite = async (req: Request, res: Response) => {
   }
 };
 
-export const getFavorites = async (req: Request, res: Response) => {
+export const getFavorites = async (req: Request, res: Response): Promise<void> => {
   const cacheKey = `favorites:${req.userId}`;
   const cached = await getCache(cacheKey);
-  if (cached) return res.status(200).json({ favorites: cached });
+  if (cached) {
+    res.status(200).json({ favorites: cached });
+    return;
+  }
 
   try {
     const userId = req.userId;
     const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
     const properties = await Property.find({ id: { $in: user.favorites } });
     await setCache(cacheKey, properties);
     res.status(200).json({ favorites: properties });
